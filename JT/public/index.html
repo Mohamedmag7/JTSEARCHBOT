@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بحث الوظائف</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .results {
+      margin-top: 20px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>بحث الوظائف</h1>
+  <input type="text" id="search" placeholder="أدخل كلمة البحث">
+  <button onclick="search()">بحث</button>
+  <div class="results" id="results"></div>
 
+  <script>
+    // تكامل مع Telegram Web Apps
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // لتوسيع التطبيق المصغر
+
+    async function search() {
+      const query = document.getElementById('search').value;
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = 'جاري البحث...';
+
+      try {
+        const response = await fetch(`/search?q=${query}`);
+        const results = await response.json();
+
+        if (results.error) {
+          resultsDiv.innerHTML = results.error;
+        } else {
+          resultsDiv.innerHTML = results.map(r => `<p>${r}</p>`).join('');
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = 'حدث خطأ أثناء البحث.';
+      }
+    }
+  </script>
+</body>
+</html>
